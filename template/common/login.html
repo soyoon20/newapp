@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container my-3">
+    <div class="row">
+        <div class="col-4">
+            <h4>로그인</h4>
+        </div>
+        <div class="col-8 text-right">
+
+            <span>또는<a href="{% url 'common:signup' %}">계정을 만드세요</a></span>
+
+        </div>
+    </div>
+    <form method="post" class="post-form" action="{% url 'common:login' %}">
+        {% csrf_token %}
+        <!-- 로그인 성공후 이동되는곳-->
+        <input type="hidden" name="next" value="{{next}}">
+        {% include "common/form_errors.html" %}
+        <div class="form-group">
+            <label for="username">사용자 ID</label>
+            <input type="text" class="form-control"
+                   name="username" id="username"
+                   value="{{ form.username.value|default_if_none:'' }}">
+                   <!- 장고에서 재공하는 내장 템플릿 필터
+                    add : 변수에 값을 추가해주는 필터
+                    default : 값이 false라면 기본값 사용
+                    default_if_none : 값이 none이라면 기본값을 사용
+                    dictsort : 딕셔너리를 받아서 주어진 키별로 정렬
+                    upper, lower: 대문자, 소문자 변환
+                    make_list : 문자열이나 숫자열을 리스트로 변환
+                    -->
+        </div>
+
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" class="form-control"
+                   name="password" id="password"
+                   value="{{ form.password.value|default_if_none:'' }}">
+        </div>
+        <button type="submit" class="btn btn-primary">로그인</button>
+    </form>
+</div>
+{% endblock %}

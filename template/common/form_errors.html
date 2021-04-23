@@ -1,0 +1,18 @@
+{% if form.errors %}
+    <!-- 데이터 전송전 체크 -->
+    {% for field in form %}
+        {% for error in field.errors%}
+            <div class="alert alert-danger">
+            <strong>{{ field.label }}</strong>
+            {{ error }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    <!-- 데이터 전송 후 체크 -->
+    {% for error in form.non_field_errors %}
+          <div class="alert alert-danger">
+            <strong>{{  error }}</strong>
+
+          </div>
+    {% endfor %}
+{% endif %}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+{% extends 'base.html' %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'bootstrap.min.css' %}">
+<div class="container">
+    <h4 class="my-3 border-bottom">질문등록</h4>
+    <form method="post" class="post-form">
+        {% csrf_token %}
+        {% if form.errors %}
+        <div>
+        {% for col in form %}
+            {% if col.errors %}
+            <h3>{{col.label}}</h3>
+            {{col.errors}}
+            {% endif %}
+        {% endfor %}
+        </div>
+    {% endif %}
+    <div class="form-group">
+        <label for="subject">제목</label>
+        <input type="text" class="form-control" name="subject" id="subject"
+               value="">
+    </div>
+    <div class="form-group">
+        <label for="content">내용</label>
+        <textarea class="form-control" name="content"
+                  id="content" rows="10"></textarea>
+    </div>
+        <button type="submit" class="btn btn-primary">저장하기</button>
+    </form>
+</div>
+
+{% endblock %}
+</body>
+</html>

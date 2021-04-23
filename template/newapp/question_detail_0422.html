@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+{% extends 'base.html' %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+    {%block script%}
+    <script>
+    $(document).ready(function (){
+       $(".delete").on('click', function (){
+         if(confirm("정말 삭제 할거야?")){
+             location.href = $(this).data('uri');
+         }
+       });
+    });
+    </script>
+    {% endblock %}
+<body>
+<!-- my-3 : 상하(위아래) 마진값을 3을 주겠다.
+     py-2 : 상하(위아래) 패딩값을 2를 주겠다.
+     p-2  : 상하좌우 패딩값을 2를 주겠다.
+     white-space: pre-line : 텍스트의 줄바꿈 설정(정상적인 출력)
+     d-flex justify-content-end : 요소 오른쪽 정렬                               -->
+
+<div class="container my-3">
+    {% if messages %}
+        <div class="alert alert-danger" role="alert">
+        {% for message in messages %}
+            <strong>{{ message.tags }}</strong>
+            <ul><li>{{ message.message }}</li></ul>
+        {% endfor %}
+        </div>
+    {% endif %}
+    <h2 class="border-bottom py-2">{{ question1.subject }}</h2>
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;">{{ question1.content }}</div>
+            <div class="d-flex justify-content-end">
+                <div class="badge badge-light p-2">
+                    <div>{{ question1.author.username }}</div>
+                    <div>{{ question1.create_date }}</div>
+                </div>
+            </div>
+         <!--질문에 댓글 달기 -->
+            {% if question1.comment_set.count > 0 %}
+            <div class="m-3">
+            {% for comment in question1.comment_set.all %}
+            <div class="comment py-2 text-muted">
+                <span style="white-space: pre-line;">{{ comment.content }}</span>
+                <span>
+                    - {{comment.author}}{{comment.create_date}}{
+                    {% if comment.modify_date %}
+                    (수정:{{ comment.modify_date }}
+                    {% endif %}
+                </span>
+                {% if request.user == comment.author %}
+                <a href="{% url 'newapp:comment_modify_question' comment.id %}">수정</a>
+                <a href="#" data-uri="{% url 'newapp:comment_delete_question' comment.id %}">삭제</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+            </div>
+             {% endif %}
+        </div>
+        <div>
+            <a href="{% url 'newapp:comment_create_question' question1.id %}">댓글추가</a>
+        </div>
+    </div>
+    <h5 class="border-bottom my-3 py-2">{{question1.answer_set.count}}개의 답변이 있습니다.</h5>
+    {% for answer in question1.answer_set.all %}
+    <div class="card my-3">
+        <div class="card-body">
+            <div class="card-text" style="white-space: pre-line;">{{ answer.content2 }}</div>
+            <div class="d-flex justify-content-end">
+                <div class="badge badge-light p-2">
+                    <div>{{ answer.author.username }}</div>
+                    <div>{{ answer.create_date2 }}</div>
+                </div>
+            </div>
+            <!--로그인한 사용자와 글쓴이가 같은 경우만 수정 버튼 출력 -->
+            {% if request.user == answer.author %}
+            <div class="my-3">
+                <a href="{% url 'newapp:question_modify' answer.id %}" class="btn btn-sm btn-outline-secondary">수정
+
+                </a>
+                <a href="#" class="delete btn btn-sm btn-outline-secondary" data-uri ="{% url 'newapp:answer_delete' answer.id %}">삭제</a>
+
+            </div>
+            {% endif %}
+
+             </div>
+    </div>
+
+    {% endfor %}
+    <form action="{% url 'newapp:answer_create' question1.id %}" method="post" class="my-3">
+        {% csrf_token %}
+        <div class="form-group">
+            <textarea {% if not user.is_authenticated %} disabled {% endif %}
+            name="content2" id="content2" class="form-control" rows="10"></textarea>
+        </div>
+        <input type="submit" value="답변등록" class="btn btn-primary">
+    </form>
+
+</div>
+{% endblock %}
+
+</body>
+</html>
